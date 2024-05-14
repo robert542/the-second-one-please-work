@@ -1,6 +1,5 @@
 streamlit
-matplotlib.pyplot
+matplotlib
 numpy
 wave
-matplotlib.widgets.Slider
-matplotlib.widgets.Cursor
+
