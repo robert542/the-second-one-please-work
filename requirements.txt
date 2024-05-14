@@ -1,0 +1,6 @@
+streamlit
+matplotlib.pyplot
+numpy
+wave
+matplotlib.widgets.Slider
+matplotlib.widgets.Cursor

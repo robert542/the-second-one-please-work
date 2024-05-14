@@ -1,8 +1,10 @@
-import monashspa
 import matplotlib.pyplot as plt
 import numpy as np
 import wave
-from matplotlib.widgets import Cursor
+from matplotlib.widgets import Cursor, Slider
+
+
+
 
 class Sound():
 
@@ -27,11 +29,32 @@ class Sound():
             if self.abs_fourier[i] > a:
                 a = self.abs_fourier[i]
                 index = i
-        print(a)
-        print(index)
-        print(self.freq[index])
         self.base_freq = self.freq[index]
         self.base_freq_index = index
+
+    def max_amp_in_range_index(self, start_freq, end_freq):
+        #find the index of the starting frequency in the range
+        index_start = -1
+        for i in range(len(self.freq)):
+            if self.freq[i] >= start_freq:
+                index_start = i
+                break
+        #find the ending frequency index in the range
+        index_end = -1
+        for i in range(index_start, len(self.freq)):
+            if self.freq[i] >= end_freq:
+                index_end = i
+                break
+        #find the maximum amplitude within the frequency range (between the two indices found)
+        a=0
+        index = -1
+        for i in range(index_start,index_end):
+            if self.abs_fourier[i] > a:
+                a = self.abs_fourier[i]
+                index = i
+        #this code is terrible, can quickly be improved by looking up bucket size and directly calculating index
+        return index
+
 
     def plot_waveform(self):
         #create the values for x axis
@@ -53,7 +76,7 @@ class Sound():
         plt.show()
         #plt.savefig("string_waeform.png")
 
-    def plot_fourier(self, min_lim:int = 0, max_lim:int = 1000):
+    def plot_fourier(self, min_lim:int = 0, max_lim:int = 1000, save_plot = False):
         fig, ax = plt.subplots()
         ax.plot(self.freq,self.abs_fourier)
         ax.set_xlabel("Frequency (Hz)")
@@ -66,7 +89,9 @@ class Sound():
         cursor = Cursor(ax, color="red", linewidth=1)
 
         plt.show()
-        #plt.savefig("trial1_spectrum.png")
+
+        if save_plot:
+            plt.savefig("trial1_spectrum.png")
 
     def plot_base_freq_mult(self):
         fig, ax = plt.subplots()
@@ -89,6 +114,67 @@ class Sound():
         plt.show()
         #plt.savefig("trial1_spectrum.png")
 
+    def plot_adjusted_base_freq(self):
+        fig, ax = plt.subplots()
+        ax.plot(self.freq,self.abs_fourier)
+        ax.set_xlabel("Frequency (Hz)")
+        ax.set_ylabel("Absolute value of FFT")
+        ax.set_yscale("log")
+        ax.set_title("Fourier transform of recorded waveform")
+
+        new_base_freq = self.freq[self.max_amp_in_range_index(270,380)]/3
+        #add lines
+        ax.axvline(x=new_base_freq, color="red", linestyle="--", linewidth=2)
+        value = 3*new_base_freq
+        while value <= 1000:
+            ax.axvline(x=value, color = "green", linestyle="--", linewidth=2)
+            value += 2*new_base_freq
+
+        ax.set_xlim([0,1000])
+
+        cursor = Cursor(ax, color="red", linewidth=1)
+
+        plt.show()
+        #plt.savefig("trial1_spectrum.png")
+
+    def plot_base_freq_slider(self, slider=None):
+        fig, ax = plt.subplots()
+        ax.plot(self.freq,self.abs_fourier)
+        ax.set_xlabel("Frequency (Hz)")
+        ax.set_ylabel("Absolute value of FFT")
+        ax.set_yscale("log")
+        ax.set_title("Fourier transform of recorded waveform")
+        #add lines
+        line_base = ax.axvline(x=self.base_freq, color="red", linestyle="--", linewidth=2)
+        lines_multiples = [ax.axvline(self.base_freq * (2*i+1), color="green", linestyle='--') for i in range(1, 4)]
+        # Slider
+        if slider == None:
+            axfreq = plt.axes([0.25, 0.1, 0.65, 0.03], facecolor='lightgoldenrodyellow')
+            slider_freq = Slider(axfreq, 'Base Frequency', 90.0, 120.0, valinit=self.base_freq)
+        else:
+            slider_freq = slider
+
+
+        ax.set_xlim([0,1000])
+
+        # Update function
+        def update(val):
+            freq = slider_freq.val
+            line_base.set_xdata([freq, freq])
+            for i, line in enumerate(lines_multiples):
+                line.set_xdata([freq * (2*(i+1)+1), freq * (2*(i+1)+1)])
+            fig.canvas.draw_idle()
+
+        # Connect the slider and the function
+        slider_freq.on_changed(update)
+
+        cursor = Cursor(ax, color="red", linewidth=1)
+
+        plt.show()
+        #plt.savefig("trial1_spectrum.png")
+
+
+
     def plot_multi_sbs(self):
         pass
 
@@ -110,14 +196,18 @@ class Sound():
         plt.show()
         #plt.savefig("trial1_spectrum.png")
 
+    def get_base_amplitude(self):
+        return self.base_freq_index
+
 
 trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
-
-# trial.plot_waveform()
-# trial.plot_fourier()
+# print(trial.base_freq_index)
+# # trial.plot_waveform()
+# trial.plot_fourier(min_lim=0,max_lim=1000)
 # trial.plot_base_freq_mult()
-
-sound2 = Sound("trimmed\guitar_tr2_trimmed_ns.wav")
+# trial.plot_adjusted_base_freq()
+trial.plot_base_freq_slider()
+#sound2 = Sound("waeyv_boy.wav")
 
 # sound2.plot_base_freq_mult()
-trial.plot_multi_overlay(sound2)
+#trial.plot_multi_overlay(sound2)
