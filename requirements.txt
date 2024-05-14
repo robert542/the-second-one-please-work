@@ -1,4 +1,5 @@
 streamlit
 numpy
 scipy
-sounddevice ==2.22
+sounddevice==0.4.6
+
