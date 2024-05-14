@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import wave
 from matplotlib.widgets import Cursor, Slider
-
+import streamlit as st
 
 
 
@@ -173,7 +173,18 @@ class Sound():
         plt.show()
         #plt.savefig("trial1_spectrum.png")
 
-
+    def plot_base_freq_slider_web(self,freq):
+        fig, ax = plt.subplots()
+        ax.plot(self.freq, self.abs_fourier)
+        ax.set_xlabel("Frequency (Hz)")
+        ax.set_ylabel("Absolute value of FFT")
+        ax.set_yscale("log")
+        ax.set_title("Fourier transform of recorded waveform")
+        ax.axvline(x=freq, color="red", linestyle="--", linewidth=2)
+        for i in range(1, 4):
+            ax.axvline(freq * (2 * i + 1), color="green", linestyle='--')
+        ax.set_xlim([0, 1000])
+        return fig
 
     def plot_multi_sbs(self):
         pass
