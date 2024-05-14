@@ -3,19 +3,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 import wave
 from matplotlib.widgets import Cursor
+from scipy.signal import iirnotch, lfilter
 
 class Sound():
 
-    def __init__(self,filename: str) -> None:
-        self.filename = filename
+    def __init__(self,filename: str, pre_data=None) -> None:
+        if pre_data is None:
+            self.filename = filename
 
-        self.signal_wave = wave.open(self.filename, "r")
+            self.signal_wave = wave.open(self.filename, "r")
 
-        #extract the sample rate from the file
-        self.sample_rate = self.signal_wave.getframerate()
+            #extract the sample rate from the file
+            self.sample_rate = self.signal_wave.getframerate()
 
-        #creat numpy array from the waveform
-        self.sig = np.frombuffer(self.signal_wave.readframes(-1), dtype=np.int16)
+            #creat numpy array from the waveform
+            self.sig = np.frombuffer(self.signal_wave.readframes(-1), dtype=np.int16)
+        else:
+            self.sig = pre_data[0]
+            self.sample_rate = pre_data[1]
 
         self.fourier = np.fft.rfft(self.sig)
         self.abs_fourier = np.abs(self.fourier)
@@ -32,6 +37,20 @@ class Sound():
         print(self.freq[index])
         self.base_freq = self.freq[index]
         self.base_freq_index = index
+
+    def notch_filter(self):
+        # Frequencies to remove (50 Hz and its harmonics)
+        harmonic_freqs = [50 * i for i in range(1, 25)]  # up to 200 Hz for example
+        Q = 30  # Quality factor
+
+        # Sampling frequency
+        fs = self.sample_rate  # Adjust as necessary
+
+        filtered_data = self.sig
+        for f0 in harmonic_freqs:
+            b, a = iirnotch(f0, Q, fs)
+            filtered_data = lfilter(b, a, filtered_data)
+        return filtered_data
 
     def plot_waveform(self):
         #create the values for x axis
@@ -115,9 +134,13 @@ trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
 
 # trial.plot_waveform()
 # trial.plot_fourier()
-# trial.plot_base_freq_mult()
+trial.plot_base_freq_mult()
 
-sound2 = Sound("trimmed\guitar_tr2_trimmed_ns.wav")
+data = trial.notch_filter()
+pre_data = [data, trial.sample_rate]
+filtered = Sound(filename="yeet", pre_data=pre_data )
+filtered.plot_base_freq_mult()
 
-# sound2.plot_base_freq_mult()
-trial.plot_multi_overlay(sound2)
+trial.plot_multi_overlay(filtered)
+
+
