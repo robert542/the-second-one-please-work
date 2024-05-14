@@ -8,10 +8,11 @@ import streamlit as st
 
 class Sound():
 
-    def __init__(self,filename: str) -> None:
-        self.filename = filename
+    def __init__(self, uploaded_file) -> None:
+        #self.filename = filename
+        self.uploaded_file = uploaded_file
 
-        self.signal_wave = wave.open(self.filename, "r")
+        self.signal_wave = wave.open(self.uploaded_file, "r")
 
         #extract the sample rate from the file
         self.sample_rate = self.signal_wave.getframerate()
@@ -211,13 +212,13 @@ class Sound():
         return self.base_freq_index
 
 
-trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
+#trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
 # print(trial.base_freq_index)
 # # trial.plot_waveform()
 # trial.plot_fourier(min_lim=0,max_lim=1000)
 # trial.plot_base_freq_mult()
 # trial.plot_adjusted_base_freq()
-trial.plot_base_freq_slider()
+#trial.plot_base_freq_slider()
 #sound2 = Sound("waeyv_boy.wav")
 
 # sound2.plot_base_freq_mult()
