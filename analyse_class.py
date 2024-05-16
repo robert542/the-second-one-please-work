@@ -72,6 +72,7 @@ class Sound():
         plt.show()
         #plt.savefig("string_waeform.png")
 
+
     def plot_fourier(self, min_lim:int = 0, max_lim:int = 1000):
         fig, ax = plt.subplots()
         ax.plot(self.freq,self.abs_fourier)
@@ -130,17 +131,17 @@ class Sound():
         #plt.savefig("trial1_spectrum.png")
 
 
-trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
+#trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
 
-# trial.plot_waveform()
-# trial.plot_fourier()
-trial.plot_base_freq_mult()
+# # trial.plot_waveform()
+# # trial.plot_fourier()
+# trial.plot_base_freq_mult()
 
-data = trial.notch_filter()
-pre_data = [data, trial.sample_rate]
-filtered = Sound(filename="yeet", pre_data=pre_data )
-filtered.plot_base_freq_mult()
+# data = trial.notch_filter()
+# pre_data = [data, trial.sample_rate]
+# filtered = Sound(filename="yeet", pre_data=pre_data )
+# filtered.plot_base_freq_mult()
 
-trial.plot_multi_overlay(filtered)
+# trial.plot_multi_overlay(filtered)
 
 

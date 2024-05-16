@@ -13,7 +13,7 @@ def stop_sound():
     sd.stop()
 
 def synthesize_sound(base_freq, sample_rate, max_harmonic, volume, add_fall_off):
-    duration_s = 5
+    duration_s = 8
     sample_number = np.arange(duration_s * sample_rate)
     total = np.zeros(duration_s * sample_rate)
     for i in range(1, 2 * max_harmonic, 2):  # Generating odd multiples up to the 2n-1 harmonic
