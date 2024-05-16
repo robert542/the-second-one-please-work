@@ -147,7 +147,7 @@ class Sound():
         ax.set_title("Fourier transform of recorded waveform")
         #add lines
         line_base = ax.axvline(x=self.base_freq, color="red", linestyle="--", linewidth=2)
-        lines_multiples = [ax.axvline(self.base_freq * (2*i+1), color="green", linestyle='--') for i in range(1, 4)]
+        lines_multiples = [ax.axvline(self.base_freq * (2*i+1), color="green", linestyle='--') for i in range(1, 6)]
         # Slider
         if slider == None:
             axfreq = plt.axes([0.25, 0.1, 0.65, 0.03], facecolor='lightgoldenrodyellow')
@@ -168,6 +168,85 @@ class Sound():
 
         # Connect the slider and the function
         slider_freq.on_changed(update)
+
+        cursor = Cursor(ax, color="red", linewidth=1)
+
+        plt.show()
+        #plt.savefig("trial1_spectrum.png")
+
+    def plot_n_freq_slider(self, slider=None):
+
+        fig, ax = plt.subplots()
+        ax.plot(self.freq,self.abs_fourier)
+        ax.set_xlabel("Frequency (Hz)")
+        ax.set_ylabel("Absolute value of FFT")
+        ax.set_yscale("log")
+        ax.set_title("Fourier transform of recorded waveform")
+        #add lines
+        line_base = ax.axvline(x=self.base_freq, color="red", linestyle="--", linewidth=2)
+        lines_multiples = [ax.axvline(self.base_freq * (2*i+1), color="green", linestyle='--') for i in range(1, 6)]
+        # Slider
+        if slider == None:
+            axfreq = plt.axes([0.25, 0.1, 0.65, 0.03], facecolor='lightgoldenrodyellow')
+            slider_freq = Slider(axfreq, 'Base Frequency', 0.0, 2.0, valinit=1.0)
+        else:
+            slider_freq = slider
+
+
+        ax.set_xlim([0,1000])
+
+        # Update function
+        def update(val):
+            freq = slider_freq.val
+            #line_base.set_xdata([freq, freq])
+            for i, line in enumerate(lines_multiples):
+                line.set_xdata([self.base_freq*(2*(i+1)+1)*freq,self.base_freq*(2*(i+1)+1)*freq])
+            fig.canvas.draw_idle()
+
+        # Connect the slider and the function
+        slider_freq.on_changed(update)
+
+        cursor = Cursor(ax, color="red", linewidth=1)
+
+        plt.show()
+        #plt.savefig("trial1_spectrum.png")
+
+    def plot_base_freq_unharmonic_slider(self, slider=None):
+        fig, ax = plt.subplots()
+        ax.plot(self.freq,self.abs_fourier)
+        ax.set_xlabel("Frequency (Hz)")
+        ax.set_ylabel("Absolute value of FFT")
+        ax.set_yscale("log")
+        ax.set_title("Fourier transform of recorded waveform")
+        #add lines
+        line_base = ax.axvline(x=self.base_freq, color="red", linestyle="--", linewidth=2)
+        lines_multiples = [ax.axvline(self.base_freq * (2*i+1), color="green", linestyle='--') for i in range(1, 6)]
+        # Slider
+        if slider == None:
+            axfreq = plt.axes([0.25, 0.1, 0.65, 0.03], facecolor='lightgoldenrodyellow')
+            slider_freq = Slider(axfreq, 'Base Frequency', 90.0, 120.0, valinit=self.base_freq)
+            axb = plt.axes([0.25, 0.3, 0.65, 0.03], facecolor='lightgoldenrodyellow')
+            slider_b = Slider(axb, 'yeet', 0.0,10.0, valinit=0.0)
+        else:
+            slider_freq = slider
+
+
+        ax.set_xlim([0,2000])
+
+        # Update function
+        def update(val):
+            freq = slider_freq.val
+            b =slider_b.val
+            line_base.set_xdata([freq, freq])
+            for i, line in enumerate(lines_multiples):
+                n = (2*(i+1)+1)
+                # line.set_xdata([freq*n*np.sqrt(1+(b*n*n)), freq*n*np.sqrt(1+(b*n*n))])
+                line.set_xdata([freq*n+n*b, freq*n+n*b])
+            fig.canvas.draw_idle()
+
+        # Connect the slider and the function
+        slider_freq.on_changed(update)
+        slider_b.on_changed(update)
 
         cursor = Cursor(ax, color="red", linewidth=1)
 
@@ -212,14 +291,16 @@ class Sound():
         return self.base_freq_index
 
 
-#trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
+trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
 # print(trial.base_freq_index)
 # # trial.plot_waveform()
 # trial.plot_fourier(min_lim=0,max_lim=1000)
 # trial.plot_base_freq_mult()
 # trial.plot_adjusted_base_freq()
-#trial.plot_base_freq_slider()
+# trial.plot_base_freq_slider()
+trial.plot_n_freq_slider()
 #sound2 = Sound("waeyv_boy.wav")
 
 # sound2.plot_base_freq_mult()
 #trial.plot_multi_overlay(sound2)
+
