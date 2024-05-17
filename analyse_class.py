@@ -8,30 +8,25 @@ import streamlit as st
 
 class Sound():
 
-    def __init__(self, uploaded_file) -> None:
-        #self.filename = filename
+    def __init__(self, uploaded_file, fft_points=None) -> None:
         self.uploaded_file = uploaded_file
-
         self.signal_wave = wave.open(self.uploaded_file, "r")
-
-        #extract the sample rate from the file
         self.sample_rate = self.signal_wave.getframerate()
-
-        #creat numpy array from the waveform
         self.sig = np.frombuffer(self.signal_wave.readframes(-1), dtype=np.int16)
 
-        self.fourier = np.fft.rfft(self.sig)
-        self.abs_fourier = np.abs(self.fourier)
-        self.freq = np.fft.rfftfreq(self.sig.size, d=1./self.sample_rate)
+        # Set the number of FFT points
+        if fft_points is None:
+            self.fft_points = len(self.sig)  # Default to the length of the signal
+        else:
+            self.fft_points = fft_points  # Use the provided number of points
 
-        a=0
-        index = -1
-        for i in range(len(self.abs_fourier)):
-            if self.abs_fourier[i] > a:
-                a = self.abs_fourier[i]
-                index = i
-        self.base_freq = self.freq[index]
-        self.base_freq_index = index
+        self.fourier = np.fft.rfft(self.sig, n=self.fft_points)
+        self.abs_fourier = np.abs(self.fourier)
+        self.freq = np.fft.rfftfreq(self.fft_points, d=1./self.sample_rate)
+
+        # Calculate the base frequency
+        self.base_freq = self.freq[np.argmax(self.abs_fourier)]
+        self.base_freq_index = np.argmax(self.abs_fourier)
 
     def max_amp_in_range_index(self, start_freq, end_freq):
         #find the index of the starting frequency in the range
@@ -102,13 +97,17 @@ class Sound():
         ax.set_yscale("log")
         ax.set_title("Fourier transform of recorded waveform")
         #add lines
-        ax.axvline(x=self.base_freq, color="red", linestyle="--", linewidth=2)
+        ax.axvline(x=self.base_freq, color="red", linestyle="--", linewidth=1)
         value = 3*self.base_freq
-        while value <= 1000:
-            ax.axvline(x=value, color = "green", linestyle="--", linewidth=2)
+        while value <= 2000:
+            ax.axvline(x=value, color = "green", linestyle="--", linewidth=1)
             value += 2*self.base_freq
+        power = 50
+        while power <= 2000:
+            ax.axvline(x=power, color = "blue", linestyle="-", linewidth=1)
+            power+=50
 
-        ax.set_xlim([0,1000])
+        ax.set_xlim([0,2000])
 
         cursor = Cursor(ax, color="red", linewidth=1)
 
@@ -295,12 +294,12 @@ trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
 # print(trial.base_freq_index)
 # # trial.plot_waveform()
 # trial.plot_fourier(min_lim=0,max_lim=1000)
-# trial.plot_base_freq_mult()
+trial.plot_base_freq_mult()
 # trial.plot_adjusted_base_freq()
 # trial.plot_base_freq_slider()
-trial.plot_n_freq_slider()
+#trial.plot_n_freq_slider()
 #sound2 = Sound("waeyv_boy.wav")
-
+print(trial.sample_rate)
 # sound2.plot_base_freq_mult()
 #trial.plot_multi_overlay(sound2)
 
