@@ -82,7 +82,10 @@ class Sound():
         ax.set_title("Fourier transform of recorded waveform")
 
         ax.set_xlim([min_lim,max_lim])
-
+        value = 50
+        while value <= 1000:
+            ax.axvline(x=value, color = "green", linestyle="--", linewidth=1)
+            value += 50
         cursor = Cursor(ax, color="red", linewidth=1)
 
         plt.show()
@@ -94,7 +97,7 @@ class Sound():
         ax.set_xlabel("Frequency (Hz)")
         ax.set_ylabel("Absolute value of FFT")
         ax.set_yscale("log")
-        ax.set_title("Fourier transform of recorded waveform")
+        ax.set_title("Fourier transform of Recorded Waveform with Odd Harmonics")
         #add lines
         ax.axvline(x=self.base_freq, color="red", linestyle="--", linewidth=2)
         value = 3*self.base_freq
@@ -121,14 +124,13 @@ class Sound():
         ax.set_xlabel("Frequency (Hz)")
         ax.set_ylabel("Absolute value of FFT")
         ax.set_yscale("log")
-        ax.set_title("Fourier transform of recorded waveform")
+        ax.set_title("Fourier transform of recorded waveforms")
 
         ax.set_xlim([min_lim,max_lim])
 
         cursor = Cursor(ax, color="red", linewidth=1)
-
         plt.show()
-        #plt.savefig("trial1_spectrum.png")
+        #plt.savefig("trials_spectrum.png")
 
 
 #trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")

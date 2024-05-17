@@ -11,7 +11,7 @@ t3_file = "trimmed\guitar_tr3_trimmed_ns.wav"
 s1 = Sound(t1_file)
 s2 = Sound(t2_file)
 s3 = Sound(t3_file)
-
-s3.plot_base_freq_mult()
-s1.plot_multi_overlay(s2,s3)
+c1 = Sound(filename)
+#s3.plot_base_freq_mult()
+c1.plot_fourier()
 
