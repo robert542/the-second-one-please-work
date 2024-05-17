@@ -97,13 +97,16 @@ class Sound():
         ax.set_xlabel("Frequency (Hz)")
         ax.set_ylabel("Absolute value of FFT")
         ax.set_yscale("log")
-        ax.set_title("Fourier transform of Recorded Waveform with Odd Harmonics")
+        ax.set_title("Fourier transform of Recorded Waveform with Inharmonic fit of Odd Harmonics")
         #add lines
-        ax.axvline(x=self.base_freq, color="red", linestyle="--", linewidth=2)
-        value = 3*self.base_freq
+        ax.axvline(x=self.base_freq, color="red", linestyle="--", linewidth=1)
+        b=0.002
+        value = 3*self.base_freq*np.sqrt(1+9*b)
+        n=3
         while value <= 1000:
-            ax.axvline(x=value, color = "green", linestyle="--", linewidth=2)
-            value += 2*self.base_freq
+            ax.axvline(x=value, color = "green", linestyle="--", linewidth=1)
+            n+=2
+            value = n*self.base_freq*np.sqrt(1+(b*(n**2)))
 
         ax.set_xlim([0,1000])
 
@@ -124,7 +127,7 @@ class Sound():
         ax.set_xlabel("Frequency (Hz)")
         ax.set_ylabel("Absolute value of FFT")
         ax.set_yscale("log")
-        ax.set_title("Fourier transform of recorded waveforms")
+        ax.set_title("Fourier transform of trial 1 with and without 50hz Notch Filter")
 
         ax.set_xlim([min_lim,max_lim])
 
@@ -133,7 +136,7 @@ class Sound():
         #plt.savefig("trials_spectrum.png")
 
 
-#trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
+trial = Sound("trimmed\guitar_tr1_trimmed_ns.wav")
 
 # # trial.plot_waveform()
 # # trial.plot_fourier()

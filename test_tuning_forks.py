@@ -13,5 +13,7 @@ s2 = Sound(t2_file)
 s3 = Sound(t3_file)
 c1 = Sound(filename)
 #s3.plot_base_freq_mult()
-c1.plot_fourier()
+s1.plot_base_freq_mult()
+s2.plot_base_freq_mult()
+s3.plot_base_freq_mult()
 
