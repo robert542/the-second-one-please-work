@@ -31,11 +31,10 @@ def synthesize_sound(base_freq, sample_rate, max_harmonic, volume, add_fall_off)
 def piano_keyboard(base_freq, sample_rate, max_harmonic, volume, add_fall_off, sound_type):
     # Define piano keys and their frequency multipliers
     keys = ["C", "D", "E", "F", "G", "A", "B", "C'"]
-    freqs = [1, 9/8, 5/4, 4/3, 3/2, 5/3, 15/8, 2]  # Just major scale for simplicity
+    freqs = [1, 9/8, 5/4, 4/3, 3/2, 5/3, 15/8, 2]  
 
     for idx, (key, freq_multiplier) in enumerate(zip(keys, freqs)):
-        # Append a unique key by using the button label, its index, and sound type
-        button_key = f"{key}_{idx}_{sound_type}"  # This makes the key unique per sound type
+        button_key = f"{key}_{idx}_{sound_type}" 
         if st.button(key, key=button_key):
             freq = base_freq * freq_multiplier
             if sound_type == 'synthesized':
@@ -47,19 +46,17 @@ def piano_keyboard(base_freq, sample_rate, max_harmonic, volume, add_fall_off, s
 
 
 def modify_uploaded_sound(base_freq, sample_rate):
-    # This function should modify the pitch of the uploaded sound
-    # Placeholder: returning a synthesized sound for demonstration
     return synthesize_sound(base_freq, sample_rate, 3, 1.0, False)
 
 def main():
     st.title('Audio Synthesis App with Piano Interface')
     
     uploaded_file = st.file_uploader("Upload a file", type=["wav"])
-    sample_rate = 44100  # Default sample rate
+    sample_rate = 44100 
     original_data = None
     if uploaded_file is not None:
         sample_rate, data = scipy.io.wavfile.read(uploaded_file)
-        original_data = data.astype(np.float32) / np.iinfo(data.dtype).max  # Normalize audio data
+        original_data = data.astype(np.float32) / np.iinfo(data.dtype).max
 
     base_freq = st.slider("Base Frequency", 80.0, 130.0, 100.0, 0.01)
     max_harmonic = st.slider("Max Harmonic (n)", 1, 160, 3)

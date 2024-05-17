@@ -17,7 +17,7 @@ def synthesize_sound(base_freq, sample_rate, max_harmonic, volume, add_fall_off)
     sample_number = np.arange(duration_s * sample_rate)
     total = np.zeros(duration_s * sample_rate)
     for i in range(1, 2 * max_harmonic, 2): 
-        freq = base_freq * i
+        freq = base_freq * i * np.sqrt(1 + 0.002 * (i ** 2))
         if i != 1:
             amp = (0.5 / ((i**2))) * volume  
         else:
